@@ -62,9 +62,6 @@ dependencies {
     // For debugging
     debugImplementation "com.facebook.litho:litho-stetho:$litho_version"
 
-    // For integration with Fresco
-    implementation "com.facebook.litho:litho-fresco:$litho_version"
-
     // For testing
     testImplementation "com.facebook.litho:litho-testing:$litho_version"
 }
