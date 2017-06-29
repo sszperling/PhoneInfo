@@ -1,29 +1,43 @@
 package zebaszp.phoneinfo.ui.main
 
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import com.facebook.device.yearclass.YearClass
 import zebaszp.phoneinfo.R
-import zebaszp.phoneinfo.databinding.ActivityMainBinding
-import zebaszp.phoneinfo.domain.DeviceInfo
 import zebaszp.phoneinfo.ui.applist.PackagesActivity
 
 
 class MainActivity : AppCompatActivity() {
 
-    val otherDensities = intArrayOf(260, 280, 360, 400, 420, 560)
+    companion object {
+        val otherDensities = intArrayOf(260, 280, 360, 400, 420, 560)
+    }
+
+    private lateinit var modelText : TextView
+    private lateinit var yearClassText : TextView
+    private lateinit var densityText : TextView
+    private lateinit var packagesButton : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding : ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        val info = DeviceInfo(YearClass.get(applicationContext), getString(getDensityString(), resources.displayMetrics.densityDpi))
-        binding.info = info
 
-        binding.handler = MainActivityHandler()
+        setContentView(R.layout.activity_main)
+
+        modelText = findViewById(R.id.info_model)
+        yearClassText = findViewById(R.id.info_yearclass)
+        densityText = findViewById(R.id.info_density)
+        packagesButton = findViewById(R.id.button_packages)
+
+        modelText.text = android.os.Build.MODEL
+        yearClassText.text = YearClass.get(applicationContext).toString()
+        densityText.text = getString(getDensityString(), resources.displayMetrics.densityDpi)
+
+        packagesButton.setOnClickListener({v -> onClickPackages(v)})
     }
 
     fun getDensityString() : Int = when (resources.displayMetrics.densityDpi) {
@@ -36,9 +50,6 @@ class MainActivity : AppCompatActivity() {
         in otherDensities -> R.string.densityKnown
         else -> R.string.densityUnknown
     }
-}
-
-class MainActivityHandler {
 
     fun onClickPackages(view: View) {
         val intent = Intent(view.context, PackagesActivity::class.java)

@@ -1,27 +1,32 @@
 package zebaszp.phoneinfo.ui.applist
 
 import android.content.pm.PackageManager
-import android.databinding.DataBindingUtil
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.annotation.UiThread
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.ProgressBar
 import zebaszp.phoneinfo.R
-import zebaszp.phoneinfo.databinding.ActivityPackagesBinding
 import zebaszp.phoneinfo.domain.PackageInfo
 
 const val LIST_STATE = "infoListState"
 
 class PackagesActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityPackagesBinding
+    private lateinit var loading: ProgressBar
+    private lateinit var recycler : RecyclerView
     private lateinit var infoList : List<PackageInfo>
 
     var task : LoadPackagesTask? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_packages)
+        setContentView(R.layout.activity_packages)
+
+        loading = findViewById(R.id.packages_loading)
+        recycler = findViewById(R.id.packages_list)
 
         infoList = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: ArrayList()
 
@@ -40,15 +45,15 @@ class PackagesActivity : AppCompatActivity() {
 
     private fun showPackages() {
         task = null
-        binding.packagesLoading.visibility = View.GONE
-        binding.packagesList.visibility = View.VISIBLE
-        binding.packagesList.adapter = PackagesRecyclerAdapter(infoList)
+        loading.visibility = View.GONE
+        recycler.visibility = View.VISIBLE
+        recycler.adapter = PackagesRecyclerAdapter(infoList)
     }
 
-    @android.support.annotation.UiThread
+    @UiThread
     private fun loadPackagesList() {
-        binding.packagesLoading.visibility = View.VISIBLE
-        binding.packagesList.visibility = View.GONE
+        loading.visibility = View.VISIBLE
+        recycler.visibility = View.GONE
         task = LoadPackagesTask(packageManager, {
             infoList = it
             showPackages()
