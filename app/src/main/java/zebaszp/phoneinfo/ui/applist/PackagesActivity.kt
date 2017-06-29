@@ -1,87 +1,113 @@
 package zebaszp.phoneinfo.ui.applist
 
 import android.content.pm.PackageManager
-import android.databinding.DataBindingUtil
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
+import android.support.v7.widget.OrientationHelper
+import com.facebook.litho.ComponentContext
+import com.facebook.litho.ComponentInfo
+import com.facebook.litho.LithoView
+import com.facebook.litho.widget.Card
+import com.facebook.litho.widget.LinearLayoutInfo
+import com.facebook.litho.widget.Recycler
+import com.facebook.litho.widget.RecyclerBinder
 import zebaszp.phoneinfo.R
-import zebaszp.phoneinfo.databinding.ActivityPackagesBinding
 import zebaszp.phoneinfo.domain.PackageInfo
+
 
 const val LIST_STATE = "infoListState"
 
 class PackagesActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityPackagesBinding
-    private lateinit var infoList : ArrayList<PackageInfo>
+    private lateinit var infoList : List<PackageInfo>
+    private lateinit var componentContext : ComponentContext
+    private lateinit var binder : RecyclerBinder
 
     var task : LoadPackagesTask? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_packages)
+
+        componentContext = ComponentContext(this)
+
+        binder = RecyclerBinder(componentContext,
+                LinearLayoutInfo(componentContext, OrientationHelper.VERTICAL, false))
+
+        val recycler = Recycler
+                .create(componentContext)
+                .binder(binder)
+                .itemDecoration(PackagesItemDecorator(this))
+                .build()
+
+        setContentView(LithoView.create(componentContext, recycler))
 
         infoList = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: ArrayList()
 
-        if(infoList.size > 0)
-            showPackages()
-        else
+        addContents()
+
+        if(infoList.isEmpty())
             loadPackagesList()
     }
 
     override fun onSaveInstanceState(outState: android.os.Bundle?) {
         super.onSaveInstanceState(outState)
-        if(task == null) {
-            outState?.putParcelableArrayList(LIST_STATE, infoList)
-        }
+        outState?.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
     }
 
-    private fun showPackages() {
+    private fun showPackages(items: List<PackageInfo>) {
         task = null
-        binding.packagesLoading.visibility = View.GONE
-        binding.packagesList.visibility = View.VISIBLE
-        binding.packagesList.adapter = PackagesRecyclerAdapter(infoList)
+        infoList = items
+        addContents()
     }
 
-    @android.support.annotation.UiThread
     private fun loadPackagesList() {
-        binding.packagesLoading.visibility = View.VISIBLE
-        binding.packagesList.visibility = View.GONE
-        /* EXPERIMENTAL - KOTLIN COROUTINES
-        launch(CommonPool) {
-            infoList = getPackageInfoList()
-            runOnUiThread({showPackages()})
-        }*/
-        task = LoadPackagesTask(packageManager, {
-            infoList = it
-            showPackages()
-        })
+        task = LoadPackagesTask(packageManager, this::showPackages)
         task!!.execute()
     }
 
-    /* suspend fun getPackageInfoList() : ArrayList<PackageInfo> {
-        val items = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-        return ArrayList(items.map {
-            PackageInfo(packageManager.getApplicationLabel(it).toString(), it)
-        })
-    } */
+    private fun addContents() {
+        if (infoList.isEmpty()) {
+            binder.insertItemAt(0,
+                    ProgressContainer.create(componentContext)
+                            .sizeDip(48)
+                            .colorRes(R.color.colorAccent)
+                            .build())
+        } else {
+            if (binder.itemCount > 0) {
+                binder.removeRangeAt(0, binder.itemCount)
+            }
 
+            for ((i, pkg) in infoList.withIndex()) {
 
+                binder.insertItemAt(i,
+                        ComponentInfo.create()
+                                .component(Card.create(componentContext)
+                                        .content(PackageItem.create(componentContext)
+                                                .item(pkg)
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .build()
+                )
+
+            }
+        }
+    }
 }
 
-class LoadPackagesTask(val pm: PackageManager, val delegate: (ArrayList<PackageInfo>) -> Unit)
-    : AsyncTask<Void, Void, ArrayList<PackageInfo>>() {
+class LoadPackagesTask(val pm: PackageManager, val delegate: (List<PackageInfo>) -> Unit)
+    : AsyncTask<Void, Void, List<PackageInfo>>() {
 
-    override fun doInBackground(vararg params: Void?): ArrayList<PackageInfo> {
+    override fun doInBackground(vararg params: Void?): List<PackageInfo> {
         val items = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        return ArrayList(items.map {
+        return items.map {
             PackageInfo(pm.getApplicationLabel(it).toString(), it)
-        })
+        }
     }
 
-    override fun onPostExecute(result: ArrayList<PackageInfo>) {
+    override fun onPostExecute(result: List<PackageInfo>) {
         delegate(result)
     }
 }

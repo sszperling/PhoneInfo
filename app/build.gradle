@@ -20,7 +20,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding.enabled true
 }
 
 kotlin {
@@ -56,9 +55,12 @@ dependencies {
     // Litho
     implementation "com.facebook.litho:litho-core:$litho_version"
     implementation "com.facebook.litho:litho-widget:$litho_version"
-    provided "com.facebook.litho:litho-annotations:$litho_version"
+    compileOnly "com.facebook.litho:litho-annotations:$litho_version"
 
+    kapt "com.facebook.litho:litho-annotations:$litho_version"
+    kapt "com.facebook.litho:litho-processor:$litho_version"
     annotationProcessor "com.facebook.litho:litho-processor:$litho_version"
+    testAnnotationProcessor "com.facebook.litho:litho-processor:$litho_version"
 
     // SoLoader
     implementation 'com.facebook.soloader:soloader:0.2.0'
