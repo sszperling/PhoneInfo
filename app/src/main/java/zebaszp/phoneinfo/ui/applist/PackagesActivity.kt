@@ -15,7 +15,7 @@ const val LIST_STATE = "infoListState"
 class PackagesActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityPackagesBinding
-    private lateinit var infoList : ArrayList<PackageInfo>
+    private lateinit var infoList : List<PackageInfo>
 
     var task : LoadPackagesTask? = null
 
@@ -25,7 +25,7 @@ class PackagesActivity : AppCompatActivity() {
 
         infoList = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: ArrayList()
 
-        if(infoList.size > 0)
+        if(infoList.isNotEmpty())
             showPackages()
         else
             loadPackagesList()
@@ -34,7 +34,7 @@ class PackagesActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: android.os.Bundle?) {
         super.onSaveInstanceState(outState)
         if(task == null) {
-            outState?.putParcelableArrayList(LIST_STATE, infoList)
+            outState?.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
         }
     }
 
@@ -61,27 +61,27 @@ class PackagesActivity : AppCompatActivity() {
         task!!.execute()
     }
 
-    /* suspend fun getPackageInfoList() : ArrayList<PackageInfo> {
+    /* suspend fun getPackageInfoList() : List<PackageInfo> {
         val items = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-        return ArrayList(items.map {
+        return items.map {
             PackageInfo(packageManager.getApplicationLabel(it).toString(), it)
-        })
+        }
     } */
 
 
 }
 
-class LoadPackagesTask(val pm: PackageManager, val delegate: (ArrayList<PackageInfo>) -> Unit)
-    : AsyncTask<Void, Void, ArrayList<PackageInfo>>() {
+class LoadPackagesTask(val pm: PackageManager, val delegate: (List<PackageInfo>) -> Unit)
+    : AsyncTask<Void, Void, List<PackageInfo>>() {
 
-    override fun doInBackground(vararg params: Void?): ArrayList<PackageInfo> {
+    override fun doInBackground(vararg params: Void?): List<PackageInfo> {
         val items = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        return ArrayList(items.map {
+        return items.map {
             PackageInfo(pm.getApplicationLabel(it).toString(), it)
-        })
+        }
     }
 
-    override fun onPostExecute(result: ArrayList<PackageInfo>) {
+    override fun onPostExecute(result: List<PackageInfo>) {
         delegate(result)
     }
 }
