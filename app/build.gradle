@@ -50,29 +50,4 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-
-
-    // Litho
-    implementation "com.facebook.litho:litho-core:$litho_version"
-    implementation "com.facebook.litho:litho-widget:$litho_version"
-    provided "com.facebook.litho:litho-annotations:$litho_version"
-
-    annotationProcessor "com.facebook.litho:litho-processor:$litho_version"
-
-    // SoLoader
-    implementation 'com.facebook.soloader:soloader:0.2.0'
-
-    // Stetho
-    implementation 'com.facebook.stetho:stetho:1.5.0'
-
-    // Optional
-    // For debugging
-    debugImplementation "com.facebook.litho:litho-stetho:$litho_version"
-
-    // For integration with Fresco
-    implementation "com.facebook.litho:litho-fresco:$litho_version"
-
-    // For testing
-    testImplementation "com.facebook.litho:litho-testing:$litho_version"
 }
