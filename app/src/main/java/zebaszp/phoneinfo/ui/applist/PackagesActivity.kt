@@ -49,25 +49,12 @@ class PackagesActivity : AppCompatActivity() {
     private fun loadPackagesList() {
         binding.packagesLoading.visibility = View.VISIBLE
         binding.packagesList.visibility = View.GONE
-        /* EXPERIMENTAL - KOTLIN COROUTINES
-        launch(CommonPool) {
-            infoList = getPackageInfoList()
-            runOnUiThread({showPackages()})
-        }*/
         task = LoadPackagesTask(packageManager, {
             infoList = it
             showPackages()
         })
         task!!.execute()
     }
-
-    /* suspend fun getPackageInfoList() : List<PackageInfo> {
-        val items = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-        return items.map {
-            PackageInfo(packageManager.getApplicationLabel(it).toString(), it)
-        }
-    } */
-
 
 }
 
