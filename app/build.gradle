@@ -40,4 +40,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    compileOnly project(':parcelable-annotation')
+    annotationProcessor project(':parcelable-processor')
 }

@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':parcelable-processor', ':parcelable-annotation'
