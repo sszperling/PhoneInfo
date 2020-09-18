@@ -3,9 +3,9 @@ package zebaszp.phoneinfo.ui.applist
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.annotation.UiThread
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.ProgressBar
 import zebaszp.phoneinfo.R
@@ -36,10 +36,10 @@ class PackagesActivity : AppCompatActivity() {
             loadPackagesList()
     }
 
-    override fun onSaveInstanceState(outState: android.os.Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if(task == null) {
-            outState?.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
+            outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
         }
     }
 
@@ -54,10 +54,10 @@ class PackagesActivity : AppCompatActivity() {
     private fun loadPackagesList() {
         loading.visibility = View.VISIBLE
         recycler.visibility = View.GONE
-        task = LoadPackagesTask(packageManager, {
+        task = LoadPackagesTask(packageManager) {
             infoList = it
             showPackages()
-        })
+        }
         task!!.execute()
     }
 
