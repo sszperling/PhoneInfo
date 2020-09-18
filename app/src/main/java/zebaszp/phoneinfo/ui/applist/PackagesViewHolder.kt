@@ -1,6 +1,6 @@
 package zebaszp.phoneinfo.ui.applist
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import zebaszp.phoneinfo.databinding.ItemPackageBinding
 import zebaszp.phoneinfo.domain.PackageInfo
 

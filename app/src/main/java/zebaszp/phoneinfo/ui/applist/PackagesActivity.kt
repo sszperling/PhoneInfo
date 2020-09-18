@@ -1,11 +1,12 @@
 package zebaszp.phoneinfo.ui.applist
 
 import android.content.pm.PackageManager
-import android.databinding.DataBindingUtil
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.databinding.DataBindingUtil
 import zebaszp.phoneinfo.R
 import zebaszp.phoneinfo.databinding.ActivityPackagesBinding
 import zebaszp.phoneinfo.domain.PackageInfo
@@ -31,10 +32,10 @@ class PackagesActivity : AppCompatActivity() {
             loadPackagesList()
     }
 
-    override fun onSaveInstanceState(outState: android.os.Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if(task == null) {
-            outState?.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
+            outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
         }
     }
 
@@ -45,14 +46,14 @@ class PackagesActivity : AppCompatActivity() {
         binding.packagesList.adapter = PackagesRecyclerAdapter(infoList)
     }
 
-    @android.support.annotation.UiThread
+    @UiThread
     private fun loadPackagesList() {
         binding.packagesLoading.visibility = View.VISIBLE
         binding.packagesList.visibility = View.GONE
-        task = LoadPackagesTask(packageManager, {
+        task = LoadPackagesTask(packageManager) {
             infoList = it
             showPackages()
-        })
+        }
         task!!.execute()
     }
 
