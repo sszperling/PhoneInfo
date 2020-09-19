@@ -1,12 +1,12 @@
 package zebaszp.phoneinfo.ui.applist
 
-import androidx.annotation.ColorRes
 import com.facebook.litho.Column
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.annotations.LayoutSpec
 import com.facebook.litho.annotations.OnCreateLayout
 import com.facebook.litho.annotations.Prop
+import com.facebook.litho.annotations.ResType
 import com.facebook.litho.widget.Progress
 import com.facebook.yoga.YogaAlign
 
@@ -14,13 +14,13 @@ import com.facebook.yoga.YogaAlign
 object ProgressContainerSpec {
     @OnCreateLayout
     fun onCreateLayout(c: ComponentContext,
-                       @Prop sizeDip: Float,
-                       @Prop @ColorRes colorRes: Int) : Component =
+                       @Prop(resType = ResType.DIMEN_SIZE) size: Int,
+                       @Prop(resType = ResType.COLOR) color: Int) : Component =
             Column.create(c)
                     .child(Progress.create(c)
-                            .colorRes(colorRes)
-                            .widthDip(sizeDip)
-                            .heightDip(sizeDip)
+                            .color(color)
+                            .widthPx(size)
+                            .heightPx(size)
                             .alignSelf(YogaAlign.CENTER)
                     )
                     .build()

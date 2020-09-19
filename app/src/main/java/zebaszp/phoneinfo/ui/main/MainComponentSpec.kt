@@ -23,7 +23,7 @@ object MainComponentSpec {
                             .child(Column.create(c)
                                     .child(Text.create(c)
                                           .textRes(R.string.deviceLabel)
-                                           .textSizeSp(14f))
+                                          .textSizeSp(14f))
                                    .child(Text.create(c)
                                             .textRes(R.string.yearClassLabel)
                                             .textSizeSp(14f))
