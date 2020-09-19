@@ -2,6 +2,13 @@
 
 The idea behind PhoneInfo is to provide a simple playground for new or diverse technologies.
 
-The app itself is simple: it displays some basic information about your device, plus a list of every package installed in it.
+The app itself is simple: it displays some basic information about your device,
+plus a list of every package installed in it.
 
-*You're currently in the `master` branch.* This branch was implemented with Android Studio 3.0 Canary with Kotlin support. All classes provided are written in Kotlin.
+*You're currently in the `master` branch.* This branch was implemented with Android Studio 4.0.1.
+All classes provided are written in Kotlin.
+
+## Notes about relevant changes
+
+- Previous versions used `AsyncTask` to perform IO tasks. That class has since been deprecated,
+and has been replaced with `lifecycleScope` and Kotlin's Coroutines API.
