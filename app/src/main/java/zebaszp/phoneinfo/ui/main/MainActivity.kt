@@ -37,10 +37,10 @@ class MainActivity : AppCompatActivity() {
         yearClassText.text = YearClass.get(applicationContext).toString()
         densityText.text = getString(getDensityString(), resources.displayMetrics.densityDpi)
 
-        packagesButton.setOnClickListener({v -> onClickPackages(v)})
+        packagesButton.setOnClickListener(this::onClickPackages)
     }
 
-    fun getDensityString() : Int = when (resources.displayMetrics.densityDpi) {
+    private fun getDensityString() : Int = when (resources.displayMetrics.densityDpi) {
         DisplayMetrics.DENSITY_LOW -> R.string.densityLow
         DisplayMetrics.DENSITY_MEDIUM -> R.string.densityMed
         DisplayMetrics.DENSITY_HIGH -> R.string.densityHi
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         else -> R.string.densityUnknown
     }
 
-    fun onClickPackages(view: View) {
+    private fun onClickPackages(view: View) {
         val intent = Intent(view.context, PackagesActivity::class.java)
         view.context.startActivity(intent)
     }
