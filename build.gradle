@@ -2,7 +2,6 @@
 
 buildscript {
     ext.kotlin_version = '1.4.10'
-    ext.androidx_version = '1.1.0'
     ext.litho_version = '0.38.0'
     repositories {
         jcenter()

@@ -1,13 +1,15 @@
 package zebaszp.phoneinfo.ui.applist
 
 import android.content.pm.PackageManager
-import android.os.AsyncTask
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.OrientationHelper
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.LithoView
 import com.facebook.litho.widget.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import zebaszp.phoneinfo.R
 import zebaszp.phoneinfo.domain.PackageInfo
 
@@ -19,8 +21,6 @@ class PackagesActivity : AppCompatActivity() {
     private lateinit var infoList : List<PackageInfo>
     private lateinit var componentContext : ComponentContext
     private lateinit var binder : RecyclerBinder
-
-    var task : LoadPackagesTask? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,9 @@ class PackagesActivity : AppCompatActivity() {
 
         setContentView(LithoView.create(componentContext, recycler))
 
-        infoList = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: ArrayList()
+        infoList = listOf()
+        // this state might be too large, so we can't persist it
+        // infoList = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: listOf()
 
         addContents()
 
@@ -49,18 +51,24 @@ class PackagesActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
+        // this state might be too large, so we can't persist it
+        // outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
     }
 
     private fun showPackages(items: List<PackageInfo>) {
-        task = null
         infoList = items
         addContents()
     }
 
     private fun loadPackagesList() {
-        task = LoadPackagesTask(packageManager, this::showPackages)
-        task!!.execute()
+        lifecycleScope.launchWhenResumed {
+            showPackages(withContext(Dispatchers.IO) {
+                val items = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+                items.map {
+                    PackageInfo(packageManager.getApplicationLabel(it).toString(), it)
+                }
+            })
+        }
     }
 
     private fun addContents() {
@@ -91,20 +99,5 @@ class PackagesActivity : AppCompatActivity() {
 
             }
         }
-    }
-}
-
-class LoadPackagesTask(val pm: PackageManager, val delegate: (List<PackageInfo>) -> Unit)
-    : AsyncTask<Void, Void, List<PackageInfo>>() {
-
-    override fun doInBackground(vararg params: Void?): List<PackageInfo> {
-        val items = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        return items.map {
-            PackageInfo(pm.getApplicationLabel(it).toString(), it)
-        }
-    }
-
-    override fun onPostExecute(result: List<PackageInfo>) {
-        delegate(result)
     }
 }

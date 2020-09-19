@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(LithoView.create(componentContext, component))
     }
 
-    fun getDensityString() : Int = when (resources.displayMetrics.densityDpi) {
+    private fun getDensityString() : Int = when (resources.displayMetrics.densityDpi) {
         DisplayMetrics.DENSITY_LOW -> R.string.densityLow
         DisplayMetrics.DENSITY_MEDIUM -> R.string.densityMed
         DisplayMetrics.DENSITY_HIGH -> R.string.densityHi
