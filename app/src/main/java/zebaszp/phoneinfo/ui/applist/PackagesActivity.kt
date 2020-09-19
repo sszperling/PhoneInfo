@@ -3,8 +3,8 @@ package zebaszp.phoneinfo.ui.applist
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.OrientationHelper
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.OrientationHelper
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ComponentInfo
 import com.facebook.litho.LithoView
@@ -50,9 +50,9 @@ class PackagesActivity : AppCompatActivity() {
             loadPackagesList()
     }
 
-    override fun onSaveInstanceState(outState: android.os.Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
+        outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
     }
 
     private fun showPackages(items: List<PackageInfo>) {

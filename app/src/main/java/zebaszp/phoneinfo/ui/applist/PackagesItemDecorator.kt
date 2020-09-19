@@ -2,9 +2,9 @@ package zebaszp.phoneinfo.ui.applist
 
 import android.content.Context
 import android.graphics.Rect
-import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 const val CARD_MARGIN_DP = 4f
 

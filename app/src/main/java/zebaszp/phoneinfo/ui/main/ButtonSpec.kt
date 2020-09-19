@@ -1,7 +1,7 @@
 package zebaszp.phoneinfo.ui.main
 
-import android.support.annotation.StringRes
 import android.text.Layout
+import androidx.annotation.StringRes
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ComponentLayout

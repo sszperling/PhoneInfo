@@ -1,6 +1,6 @@
 package zebaszp.phoneinfo.ui.applist
 
-import android.support.annotation.ColorRes
+import androidx.annotation.ColorRes
 import com.facebook.litho.Column
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ComponentLayout
