@@ -1,5 +1,7 @@
 package zebaszp.phoneinfo.ui.applist;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -11,7 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import zebaszp.phoneinfo.R;
 import zebaszp.phoneinfo.domain.PackageInfo;
@@ -19,13 +24,13 @@ import zebaszp.phoneinfo.domain.PackageInfo;
 
 public class PackagesActivity extends AppCompatActivity {
 	
-	private static final String LIST_STATE = "infoListState";
+	//private static final String LIST_STATE = "infoListState";
 	
 	private ProgressBar loading;
 	private RecyclerView recycler;
 	private List<PackageInfo> infoList;
-	
-	private LoadPackagesTask task = null;
+
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,12 +40,13 @@ public class PackagesActivity extends AppCompatActivity {
 		loading = findViewById(R.id.packages_loading);
 		recycler = findViewById(R.id.packages_list);
 		
+		/*
 		if(savedInstanceState != null) {
 			infoList = savedInstanceState.getParcelableArrayList(LIST_STATE);
-		}
-		if(infoList == null) {
-			infoList = new ArrayList<>();
-		}
+		} else {
+		*/
+		infoList = new ArrayList<>();
+		//}
 		
 		if(!infoList.isEmpty()) {
 			showPackages();
@@ -52,13 +58,11 @@ public class PackagesActivity extends AppCompatActivity {
 	@Override
 	protected void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if(task == null) {
-			outState.putParcelableArrayList(LIST_STATE, new ArrayList<>(infoList));
-		}
+		//outState.putParcelableArrayList(LIST_STATE, new ArrayList<>(infoList));
 	}
-	
+
+	@UiThread
 	private void showPackages() {
-		task = null;
 		loading.setVisibility(View.GONE);
 		recycler.setVisibility(View.VISIBLE);
 		recycler.setAdapter(new PackagesRecyclerAdapter(infoList));
@@ -68,12 +72,18 @@ public class PackagesActivity extends AppCompatActivity {
 	private void loadPackagesList() {
 		loading.setVisibility(View.VISIBLE);
 		recycler.setVisibility(View.GONE);
-		
-		task = new LoadPackagesTask(getPackageManager(),
-				it -> {
-			infoList = it;
-			showPackages();
+
+		PackageManager pm = getPackageManager();
+		executor.submit(() -> {
+			List<ApplicationInfo> items = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+			List<PackageInfo> results = new LinkedList<>();
+			for (ApplicationInfo item : items) {
+				results.add(new PackageInfo(pm.getApplicationLabel(item).toString(), item));
+			}
+			runOnUiThread(() -> {
+				infoList = results;
+				showPackages();
+			});
 		});
-		task.execute();
 	}
 }
