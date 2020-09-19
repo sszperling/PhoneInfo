@@ -2,6 +2,13 @@
 
 The idea behind PhoneInfo is to provide a simple playground for new or diverse technologies.
 
-The app itself is simple: it displays some basic information about your device, plus a list of every package installed in it.
+The app itself is simple: it displays some basic information about your device,
+plus a list of every package installed in it.
 
-*You're currently in the `java` branch.* This branch was implemented using standard Java and Android classes available in Android Studio 2.3. However, it was implemented with 3.0 Canary, and as such might not work properly in previous versions.
+*You're currently in the `java` branch.* This branch was implemented with Android Studio 4.0.1. 
+All classes provided are written in Java.
+
+## Notes about relevant changes
+
+- Previous versions used `AsyncTask` to perform IO tasks. That class has since been deprecated,
+and has been replaced with `java.util.concurrency`.
