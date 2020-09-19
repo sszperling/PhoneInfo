@@ -6,12 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.OrientationHelper
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.ComponentInfo
 import com.facebook.litho.LithoView
-import com.facebook.litho.widget.Card
-import com.facebook.litho.widget.LinearLayoutInfo
-import com.facebook.litho.widget.Recycler
-import com.facebook.litho.widget.RecyclerBinder
+import com.facebook.litho.widget.*
 import zebaszp.phoneinfo.R
 import zebaszp.phoneinfo.domain.PackageInfo
 
@@ -31,8 +27,9 @@ class PackagesActivity : AppCompatActivity() {
 
         componentContext = ComponentContext(this)
 
-        binder = RecyclerBinder(componentContext,
-                LinearLayoutInfo(componentContext, OrientationHelper.VERTICAL, false))
+        binder = RecyclerBinder.Builder()
+                .layoutInfo(LinearLayoutInfo(componentContext, OrientationHelper.VERTICAL, false))
+                .build(componentContext)
 
         val recycler = Recycler
                 .create(componentContext)
@@ -70,7 +67,7 @@ class PackagesActivity : AppCompatActivity() {
         if (infoList.isEmpty()) {
             binder.insertItemAt(0,
                     ProgressContainer.create(componentContext)
-                            .sizeDip(48)
+                            .sizeDip(48f)
                             .colorRes(R.color.colorAccent)
                             .build())
         } else {
@@ -81,7 +78,7 @@ class PackagesActivity : AppCompatActivity() {
             for ((i, pkg) in infoList.withIndex()) {
 
                 binder.insertItemAt(i,
-                        ComponentInfo.create()
+                        ComponentRenderInfo.create()
                                 .component(Card.create(componentContext)
                                         .content(PackageItem.create(componentContext)
                                                 .item(pkg)

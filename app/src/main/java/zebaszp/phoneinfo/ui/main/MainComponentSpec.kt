@@ -13,56 +13,51 @@ import zebaszp.phoneinfo.domain.DeviceInfo
 import zebaszp.phoneinfo.ui.applist.PackagesActivity
 
 @LayoutSpec
-class MainComponentSpec {
+object MainComponentSpec {
 
-    companion object {
+    @OnCreateLayout
+    fun onCreateLayout(c: ComponentContext, @Prop info: DeviceInfo) : Component =
+            Column.create(c)
+                    .paddingDip(YogaEdge.ALL, 16f)
+                    .child(Row.create(c)
+                            .child(Column.create(c)
+                                    .child(Text.create(c)
+                                          .textRes(R.string.deviceLabel)
+                                           .textSizeSp(14f))
+                                   .child(Text.create(c)
+                                            .textRes(R.string.yearClassLabel)
+                                            .textSizeSp(14f))
+                                    .child(Text.create(c)
+                                            .textRes(R.string.densityLabel)
+                                            .textSizeSp(14f))
+                                    .build()
+                            )
+                            .child(Column.create(c)
+                                    .marginDip(YogaEdge.START, 16f)
+                                    .child(Text.create(c)
+                                            .text(android.os.Build.MODEL)
+                                            .textSizeSp(14f))
+                                    .child(Text.create(c)
+                                            .text(info.yearClass.toString())
+                                            .textSizeSp(14f))
+                                    .child(Text.create(c)
+                                            .text(info.density)
+                                            .textSizeSp(14f))
+                                    .build()
+                           )
+                            .flexGrow(1f)
+                            .build()
+                    )
+                    .child(
+                            Button.create(c)
+                                    .textRes(R.string.packagesButtonLabel)
+                                    .textSizeSp(18f)
+                                    .onClickHandler(MainComponent.onClickButton(c)))
+                    .build()
 
-        @JvmStatic
-        @OnCreateLayout
-        fun onCreateLayout(c: ComponentContext, @Prop info: DeviceInfo) : ComponentLayout =
-                Column.create(c)
-                        .paddingDip(YogaEdge.ALL, 16)
-                        .child(Row.create(c)
-                                .child(Column.create(c)
-                                        .child(Text.create(c)
-                                              .textRes(R.string.deviceLabel)
-                                               .textSizeSp(14f))
-                                       .child(Text.create(c)
-                                                .textRes(R.string.yearClassLabel)
-                                                .textSizeSp(14f))
-                                        .child(Text.create(c)
-                                                .textRes(R.string.densityLabel)
-                                                .textSizeSp(14f))
-                                        .build()
-                                )
-                                .child(Column.create(c)
-                                        .marginDip(YogaEdge.START, 16)
-                                        .child(Text.create(c)
-                                                .text(android.os.Build.MODEL)
-                                                .textSizeSp(14f))
-                                        .child(Text.create(c)
-                                                .text(info.yearClass.toString())
-                                                .textSizeSp(14f))
-                                        .child(Text.create(c)
-                                                .text(info.density)
-                                                .textSizeSp(14f))
-                                        .build()
-                               )
-                                .flexGrow(1f)
-                                .build()
-                        )
-                        .child(
-                                Button.create(c)
-                                        .textRes(R.string.packagesButtonLabel)
-                                        .textSizeSp(18f)
-                                        .clickHandler(MainComponent.onClickButton(c)))
-                        .build()
-
-        @JvmStatic
-        @OnEvent(ClickEvent::class)
-        fun onClickButton(c: ComponentContext) {
-            val intent = Intent(c, PackagesActivity::class.java)
-            c.startActivity(intent)
-        }
+    @OnEvent(ClickEvent::class)
+    fun onClickButton(c: ComponentContext) {
+        val intent = Intent(c.androidContext, PackagesActivity::class.java)
+        c.androidContext.startActivity(intent)
     }
 }
