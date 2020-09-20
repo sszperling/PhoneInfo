@@ -23,7 +23,7 @@ object PackageItemSpec {
                             .textRes(R.string.packageItemAppName, item.name)
                             .textSizeSp(14f))
                     .child(Text.create(c)
-                            .textRes(R.string.packageItemPkgName, item.appInfo.packageName)
+                            .textRes(R.string.packageItemPkgName, item.packageName)
                             .textSizeSp(14f))
                     .build()
 }
