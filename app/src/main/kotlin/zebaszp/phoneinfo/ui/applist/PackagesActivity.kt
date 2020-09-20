@@ -1,85 +1,44 @@
 package zebaszp.phoneinfo.ui.applist
 
-import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.OrientationHelper
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.facebook.litho.ComponentContext
+import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
-import com.facebook.litho.widget.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import zebaszp.phoneinfo.R
-import zebaszp.phoneinfo.domain.PackageInfo
+import com.facebook.litho.StateHandler
 
-const val LIST_STATE = "infoListState"
+private const val STATE_HANDLER = "stateHandler"
 
 class PackagesActivity : AppCompatActivity() {
 
-    private lateinit var infoList: List<PackageInfo>
-    private lateinit var componentContext: ComponentContext
-    private lateinit var binder: RecyclerBinder
+    private lateinit var componentTree: ComponentTree
+
+    private val viewModel: StateHandlerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        componentContext = ComponentContext(this)
-
-        binder = RecyclerBinder.Builder()
-            .layoutInfo(LinearLayoutInfo(componentContext, OrientationHelper.VERTICAL, false))
-            .build(componentContext)
-
-        val recycler = Recycler
-            .create(componentContext)
-            .binder(binder)
-            .itemDecoration(PackagesItemDecorator(this))
+        val c = ComponentContext(this)
+        componentTree = ComponentTree.create(c, PackagesRoot.create(c))
+            .stateHandler(viewModel.stateHandler)
             .build()
-
-        setContentView(LithoView.create(componentContext, recycler))
-
-        val packages =
-            savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: listOf<PackageInfo>()
-
-
-        if (packages.isNotEmpty())
-            showPackages(packages)
-        else
-            loadPackagesList()
+        setContentView(LithoView(c).apply { componentTree = this@PackagesActivity.componentTree })
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.stateHandler = componentTree.acquireStateHandler()
     }
 
-    private fun showPackages(items: List<PackageInfo>) {
-        infoList = items
-        if (binder.itemCount > 0) {
-            binder.removeRangeAt(0, binder.itemCount)
-        }
-        for ((i, pkg) in infoList.withIndex()) {
-            binder.insertItemAt(i, ComponentRenderInfo.create()
-                .component(Card.create(componentContext)
-                    .content(PackageItem.create(componentContext).item(pkg)))
-                .build())
-        }
-    }
+    class StateHandlerViewModel(private val state: SavedStateHandle) : ViewModel() {
+        private val liveData: MutableLiveData<StateHandler>
+            get() = state.getLiveData(STATE_HANDLER)
 
-    private fun loadPackagesList() {
-        binder.insertItemAt(0, ProgressContainer.create(componentContext)
-            .sizeDip(48f)
-            .colorRes(R.color.colorAccent)
-            .build())
-
-        lifecycleScope.launchWhenResumed {
-            val pm = packageManager
-            showPackages(withContext(Dispatchers.IO) {
-                val items = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-                items.map {
-                    PackageInfo(pm.getApplicationLabel(it).toString(), it.packageName)
-                }
-            })
-        }
+        var stateHandler: StateHandler?
+            get() = liveData.value
+            set(value) { liveData.value = value }
     }
 }

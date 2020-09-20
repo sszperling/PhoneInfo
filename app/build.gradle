@@ -54,12 +54,15 @@ dependencies {
     // Litho
     implementation "com.facebook.litho:litho-core:$litho_version"
     implementation "com.facebook.litho:litho-widget:$litho_version"
+    implementation "com.facebook.litho:litho-sections-core:$litho_version"
+    implementation "com.facebook.litho:litho-sections-widget:$litho_version"
+
     compileOnly "com.facebook.litho:litho-annotations:$litho_version"
+    compileOnly "com.facebook.litho:litho-sections-annotations:$litho_version"
 
     kapt "com.facebook.litho:litho-annotations:$litho_version"
     kapt "com.facebook.litho:litho-processor:$litho_version"
-    annotationProcessor "com.facebook.litho:litho-processor:$litho_version"
-    testAnnotationProcessor "com.facebook.litho:litho-processor:$litho_version"
+    kapt "com.facebook.litho:litho-sections-processor:$litho_version"
 
     // SoLoader
     implementation 'com.facebook.soloader:soloader:0.5.1'
