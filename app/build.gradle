@@ -27,6 +27,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    sourceSets.all {
+        java.srcDir("src/$name/kotlin")
+    }
     useLibrary "android.test.runner"
     useLibrary "android.test.base"
     useLibrary "android.test.mock"

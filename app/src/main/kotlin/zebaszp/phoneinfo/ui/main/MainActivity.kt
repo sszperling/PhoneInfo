@@ -18,26 +18,16 @@ class MainActivity : AppCompatActivity() {
         val otherDensities = intArrayOf(260, 280, 360, 400, 420, 560)
     }
 
-    private lateinit var modelText : TextView
-    private lateinit var yearClassText : TextView
-    private lateinit var densityText : TextView
-    private lateinit var packagesButton : Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        modelText = findViewById(R.id.info_model)
-        yearClassText = findViewById(R.id.info_yearclass)
-        densityText = findViewById(R.id.info_density)
-        packagesButton = findViewById(R.id.button_packages)
+        findViewById<TextView>(R.id.info_model).text = android.os.Build.MODEL
+        findViewById<TextView>(R.id.info_yearclass).text = YearClass.get(applicationContext).toString()
+        findViewById<TextView>(R.id.info_density).text = getString(getDensityString(), resources.displayMetrics.densityDpi)
 
-        modelText.text = android.os.Build.MODEL
-        yearClassText.text = YearClass.get(applicationContext).toString()
-        densityText.text = getString(getDensityString(), resources.displayMetrics.densityDpi)
-
-        packagesButton.setOnClickListener(this::onClickPackages)
+        findViewById<Button>(R.id.button_packages).setOnClickListener(this::onClickPackages)
     }
 
     private fun getDensityString() : Int = when (resources.displayMetrics.densityDpi) {

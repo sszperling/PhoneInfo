@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import zebaszp.phoneinfo.R
 import zebaszp.phoneinfo.domain.PackageInfo
 
-// const val LIST_STATE = "infoListState"
+const val LIST_STATE = "infoListState"
 
 class PackagesActivity : AppCompatActivity() {
 
@@ -28,27 +28,25 @@ class PackagesActivity : AppCompatActivity() {
         loading = findViewById(R.id.packages_loading)
         recycler = findViewById(R.id.packages_list)
 
-        infoList = listOf()
-        // this state might be too large, so we can't persist it
-        // infoList = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: listOf()
+        val packages = savedInstanceState?.getParcelableArrayList(LIST_STATE) ?: listOf<PackageInfo>()
 
-        if (infoList.isNotEmpty())
-            showPackages()
+        if (packages.isNotEmpty())
+            showPackages(packages)
         else
             loadPackagesList()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // this state might be too large, so we can't persist it
-        // outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
+        outState.putParcelableArrayList(LIST_STATE, ArrayList(infoList))
     }
 
     @UiThread
-    private fun showPackages() {
+    private fun showPackages(packages: List<PackageInfo>) {
+        infoList = packages
         loading.visibility = View.GONE
         recycler.visibility = View.VISIBLE
-        recycler.adapter = PackagesRecyclerAdapter(infoList)
+        recycler.adapter = PackagesRecyclerAdapter(packages)
     }
 
     @UiThread
@@ -57,13 +55,13 @@ class PackagesActivity : AppCompatActivity() {
         recycler.visibility = View.GONE
 
         lifecycleScope.launchWhenResumed {
-            withContext(Dispatchers.IO) {
-                val items = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-                infoList = items.map {
-                    PackageInfo(packageManager.getApplicationLabel(it).toString(), it)
+            val pm = packageManager
+            showPackages(withContext(Dispatchers.IO) {
+                val items = pm.getInstalledApplications(PackageManager.GET_META_DATA)
+                items.map {
+                    PackageInfo(pm.getApplicationLabel(it).toString(), it.packageName)
                 }
-            }
-            showPackages()
+            })
         }
     }
 }

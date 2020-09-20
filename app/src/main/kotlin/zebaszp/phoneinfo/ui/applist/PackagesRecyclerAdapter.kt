@@ -22,7 +22,7 @@ class PackagesRecyclerAdapter(private val items : List<PackageInfo>) : RecyclerV
         holder.appName.text =
                 holder.itemView.context.getString(R.string.packageItemAppName, items[position].name)
         holder.pkgName.text =
-                holder.itemView.context.getString(R.string.packageItemPkgName, items[position].appInfo.packageName)
+                holder.itemView.context.getString(R.string.packageItemPkgName, items[position].packageName)
     }
 }
 
