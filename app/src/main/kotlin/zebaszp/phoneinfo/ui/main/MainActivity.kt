@@ -15,7 +15,9 @@ import zebaszp.phoneinfo.ui.applist.PackagesActivity
 
 class MainActivity : AppCompatActivity() {
 
-    val otherDensities = intArrayOf(260, 280, 360, 400, 420, 560)
+    companion object {
+        val otherDensities = intArrayOf(260, 280, 360, 400, 420, 560)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
